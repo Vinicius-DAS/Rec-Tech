@@ -19,7 +19,6 @@ def aviso_lixeira(request):
 
     manutencoes=Manutencao.objects.all()
     lixeiras_lotadas=Lotada.objects.all()
-    print(lixeiras_lotadas)
 
     context={
         "manutencoes":manutencoes, 
@@ -77,7 +76,6 @@ def admin_home(request):
 
     lixeiras = Lixeira.objects.all()
     bairros = Bairro.objects.all()
-    print(bairros)
     
     tipo_residuo = request.GET.get('tipo_residuo')
     domicilio = request.GET.get('domicilio')
@@ -150,9 +148,6 @@ def admin_avaliacao(request):
         'nota5': nota5,
     }
 
-    print(media_geral)
-    print(contagem_notas)
-    print(contagem_notas)
     context = {
         'media_geral': media_geral,
         'contagem_notas': contagem_notas,
@@ -169,6 +164,5 @@ def admin_perfil(request):
         "admin":admin,
         "user_agent":user_agent
     }
-    print(admin)
 
     return render(request, 'admin_perfil.html', context)

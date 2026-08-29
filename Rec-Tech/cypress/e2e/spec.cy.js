@@ -4,8 +4,8 @@ describe('Conjunto de Testes Iniciais', () => {
     // Renomeia o banco de dados existente, se houver
     cy.exec('if [ -f db.sqlite3 ]; then mv db.sqlite3 db_backup.sqlite3; fi', { failOnNonZeroExit: false });
     cy.exec('rm db.sqlite3', { failOnNonZeroExit: false }); // Remove o banco de dados existente
-    cy.exec('python3 manage.py makemigrations', { failOnNonZeroExit: false }); // Executa migração do banco de dados
-    cy.exec('python3 manage.py migrate', { failOnNonZeroExit: false }); // Executa migração do banco de dados
+    cy.exec('./venv/bin/python3 manage.py makemigrations'); // Executa migração do banco de dados
+    cy.exec('./venv/bin/python3 manage.py migrate'); // Executa migração do banco de dados
     //cy.exec('python3 manage.py runserver', { failOnNonZeroExit: false }); achei melhor nao deixar habilitado
   });
 
@@ -36,8 +36,8 @@ describe('Conjunto de testes para Admins', () => {
 
   //Login como administrador da aplicação != admin django
   beforeEach(() => {
-    cy.exec('python3 manage.py delete_objects', { failOnNonZeroExit: false }); // Deleta os objetos que podem ter sido criados anteriormente
-    cy.exec('python3 manage.py create_objects', { failOnNonZeroExit: false }); // Cria novamente para assegurar a independencia dos testes
+    cy.exec('./venv/bin/python3 manage.py delete_objects', { failOnNonZeroExit: false }); // Deleta os objetos que podem ter sido criados anteriormente
+    cy.exec('./venv/bin/python3 manage.py create_objects'); // Cria novamente para assegurar a independencia dos testes
 
     cy.visit('http://127.0.0.1:8000/auth/login/');
     cy.get('[placeholder="Usuário"]').type(admin);
@@ -140,8 +140,8 @@ describe('Conjunto de testes para Admins', () => {
 
 describe('Conjunto de testes para Clientes', () => {
   beforeEach(() => {
-    cy.exec('python3 manage.py delete_objects', { failOnNonZeroExit: false }); // Deleta os objetos que podem ter sido criados anteriormente
-    cy.exec('python3 manage.py create_objects', { failOnNonZeroExit: false }); // Cria novamente para assegurar a independencia dos testes
+    cy.exec('./venv/bin/python3 manage.py delete_objects', { failOnNonZeroExit: false }); // Deleta os objetos que podem ter sido criados anteriormente
+    cy.exec('./venv/bin/python3 manage.py create_objects'); // Cria novamente para assegurar a independencia dos testes
 
     cy.visit('http://127.0.0.1:8000/auth/login/');
     cy.get('[placeholder="Usuário"]').type(cliente);
@@ -202,8 +202,8 @@ it('Caso de teste Avaliação das coletas', () => {
 
 describe('Conjunto de testes para Coletores', () => {
   beforeEach(() => {
-    cy.exec('python3 manage.py delete_objects', { failOnNonZeroExit: false }); // Deleta os objetos que podem ter sido criados anteriormente
-    cy.exec('python3 manage.py create_objects', { failOnNonZeroExit: false }); // Cria novamente para assegurar a independencia dos testes
+    cy.exec('./venv/bin/python3 manage.py delete_objects', { failOnNonZeroExit: false }); // Deleta os objetos que podem ter sido criados anteriormente
+    cy.exec('./venv/bin/python3 manage.py create_objects'); // Cria novamente para assegurar a independencia dos testes
 
     cy.visit('http://127.0.0.1:8000/auth/login/');
     cy.get('[placeholder="Usuário"]').type(coletor);

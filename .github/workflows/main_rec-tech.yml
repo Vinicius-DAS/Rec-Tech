@@ -1,5 +1,4 @@
-
-name: CI pipeline  - Rec & Tech
+name: CI pipeline - Rec & Tech
 on:
   push:
     branches:
@@ -14,45 +13,41 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python version
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: Rec-Tech/requirements.txt
 
-      - name: Create and start virtual environment
+      - name: Create virtual environment
+        run: python -m venv Rec-Tech/venv
+
+      - name: Install Python dependencies
+        # `source .../activate` only affects the shell in this one step, not
+        # later steps — so the Cypress spec's cy.exec calls (which shell out
+        # to `./venv/bin/python3` themselves) need this exact venv path to
+        # actually have the dependencies installed into it.
+        run: Rec-Tech/venv/bin/pip install -r Rec-Tech/requirements.txt
+
+      - name: Install Node dependencies
+        working-directory: Rec-Tech
+        run: npm ci
+
+      - name: Run migrations and start the dev server
+        working-directory: Rec-Tech
+        env:
+          # Optional — set a GOOGLE_MAPS_API_KEY repo secret to also cover
+          # the route-planning tests; without it those 2 fail, the rest
+          # (10/12) still run and validate normally. Has to be set on the
+          # server process here, not on the later Cypress step — env vars
+          # from a later step don't reach a background process started in
+          # an earlier one.
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
-          python -m venv venv
-          source venv/bin/activate
-      
-      - name: Install dependencies
-        run: |
-          cd Rec-Tech
-          pip install -r requirements.txt
-          npm ci
-          cd ..
-          
-      - name: Run local server
-        run: |
-          cd Rec-Tech
-          python manage.py migrate
-          python manage.py runserver &
+          venv/bin/python manage.py migrate
+          venv/bin/python manage.py runserver &
           sleep 5
+
       - name: Run E2E tests
-        run: |
-          cd Rec-Tech
-          npx cypress run
-
-      - name: Cleaning testing files
-        run: |
-          ls
-          cd Rec-Tech
-          rm package-lock.json
-          rm package.json
-          rm -rf cypress
-          rm -rf node_modules
-          rm cypress.config.js
-          cd .. 
-       
-      
-  
-
- 
+        working-directory: Rec-Tech
+        run: npx cypress run

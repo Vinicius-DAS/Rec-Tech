@@ -16,7 +16,7 @@ Antes de começar, certifique-se de ter o seguinte instalado na sua máquina:
 
 Abra seu terminal e navegue até o diretório onde deseja clonar o repositório. Em seguida, execute o comando abaixo:
 ```
-git clone https://github.com/MigueldsBatista/Rec-Tech.git
+git clone https://github.com/Vinicius-DAS/Rec-Tech.git
 ```
 
 ### 2. Navegue até o Diretório do Projeto

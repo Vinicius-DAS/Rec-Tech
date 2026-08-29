@@ -370,3 +370,10 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,django
+
+# Node / Cypress
+node_modules/
+cypress/screenshots/
+cypress/videos/
+db_backup.sqlite3
+.env

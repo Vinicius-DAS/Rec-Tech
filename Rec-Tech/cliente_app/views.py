@@ -25,7 +25,6 @@ def cliente_home(request):
         "lixeiras":dados_lixeiras,
         "user_agent":get_user_agent(request)
     }
-    print(lixeiras)
     return render(request, 'cliente_home.html',context)
 
 @has_role_or_redirect(Cliente)
@@ -51,9 +50,6 @@ def cliente_manutencao(request):
         )
     
 
-        print(data_manutencao)
-        print(tempo_manutencao)
-        print(motivo_manutencao)
         messages.success(request, 'Pedido enviado com sucesso!')
     context={
         'lixeiras':lixeiras,
@@ -69,7 +65,6 @@ def cliente_avaliacao(request):
     if request.method == 'POST':
         lixeira_id = request.POST.get('lixeira')
         nota = request.POST.get('nota')
-        print(nota)
         comentario = request.POST.get('comentario')
 
         if lixeira_id and nota:
