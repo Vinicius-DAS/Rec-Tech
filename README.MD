@@ -30,6 +30,10 @@
 
 Bem-vindo ao repositório da nossa aplicação de gestão de resíduos sólidos! Este projeto visa otimizar o gerenciamento de resíduos em áreas urbanas, proporcionando uma solução eficaz e sustentável para moradores, coletores e administradores. Através de uma interface web intuitiva, nossa aplicação facilita a manutenção de lixeiras, monitoramento de resíduos, agendamento de coletas e muito mais. Abaixo estão as principais funcionalidades e links importantes do projeto.
 
+**Link do Site:** ver [DEPLOY.md](DEPLOY.md) (o link antigo do Azure não existe mais).
+
+**💻 Rodando localmente:** ver [contributing.md](contributing.md).
+
 ## ⚙️ Principais Funcionalidades
 
 ### Para Moradores

@@ -1,0 +1,48 @@
+# Render Blueprint — see DEPLOY.md for the full walkthrough.
+#
+# https://render.com/docs/blueprint-spec
+services:
+  - name: rec-tech
+    type: web
+    runtime: python
+    plan: free
+    rootDir: Rec-Tech
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    # migrate runs on every deploy — safe, since applying an
+    # already-applied migration is a no-op.
+    startCommand: "python manage.py migrate && gunicorn rt_project.wsgi:application"
+    envVars:
+      - key: TARGET_ENV
+        value: prod
+      - key: DEBUG
+        value: "0"
+      # Leading dot matches any subdomain — works without knowing the
+      # exact *.onrender.com hostname Render assigns up front.
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: SECURE_SSL_REDIRECT
+        value: "1"
+      - key: SECRET_KEY
+        generateValue: true
+      # Postgres — deliberately NOT Render's own managed database: its
+      # free tier Postgres expires after 30 days, which would silently
+      # break this once it's linked from a portfolio. Using Neon instead
+      # (neon.tech, free tier has no expiration). Render prompts for
+      # these during Blueprint setup — paste in the values from your
+      # Neon project's connection details.
+      - key: DBNAME
+        sync: false
+      - key: DBHOST
+        sync: false
+      - key: DBUSER
+        sync: false
+      - key: DBPASS
+        sync: false
+      # Required for the "melhor rota" (best collection route) feature —
+      # a fresh key from Google Cloud Console (Directions API enabled).
+      # The one this project used to have hardcoded was leaked and has
+      # since been removed from the codebase; treat it as compromised.
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false

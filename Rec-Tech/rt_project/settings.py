@@ -1,13 +1,18 @@
 from pathlib import Path
 import os
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 
-GOOGLE_MAPS_API_KEY = ('AIzaSyBw7zuLJC2b-nX3s1fwY9-Z8QAEdDNrO_8')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / '.env')
+
+# Was a real, live Google Maps API key hardcoded here (and duplicated in a
+# dead routes/rotas.py script, since removed) — treat that key as
+# compromised and regenerate it. Only read from the environment now.
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -18,8 +23,10 @@ NOT_PROD = not (TARGET_ENV and TARGET_ENV.lower().startswith('prod'))
 if NOT_PROD:
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
-    # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = '<Secret key>'
+    # Falls back to a freshly generated key so local dev works out of the
+    # box with no setup; set SECRET_KEY in .env if you need it stable
+    # across restarts (e.g. to keep sessions alive).
+    SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
     ALLOWED_HOSTS = []
     DATABASES = {
         'default': {
@@ -68,14 +75,12 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "rt_project.middlewares.CSRFMiddleware",
-
     "django.middleware.security.SecurityMiddleware",
-    # Add whitenoise middleware after the security middleware                             
+    # Add whitenoise middleware after the security middleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -129,7 +134,18 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL="/images/"
 
-STATICFILES_STORAGE = ('whitenoise.storage.CompressedManifestStaticFilesStorage')
+# The old-style STATICFILES_STORAGE setting has no effect on Django 6.1 —
+# the legacy bridge into STORAGES was removed with no replacement, so this
+# was silently inert (falling back to plain, uncompressed, non-hashed
+# static storage) despite whitenoise being configured for the opposite.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 LANGUAGE_CODE = 'pt-br'
 
@@ -140,5 +156,3 @@ USE_I18N = True
 USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-DEBUG=True

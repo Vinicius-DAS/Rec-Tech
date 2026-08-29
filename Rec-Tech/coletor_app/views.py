@@ -23,7 +23,6 @@ def coletor_home(request):
         "coletor":coletor,
         "user_agent":get_user_agent(request)
     }
-    print(coletor)
     return render(request, "coletor_home.html", context)
 
 
@@ -106,7 +105,6 @@ def melhor_rota(request):
 
         base_url = "https://www.google.com/maps/dir/"
         rota_url = base_url + "/".join(rota)
-        print(rota)
         context = {
             "user_agent": get_user_agent(request),
             'rota_url': rota_url,
